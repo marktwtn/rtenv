@@ -124,7 +124,7 @@ typedef struct {
 	char description[MAX_CMDHELP + 1];
 } hcmd_entry;
 const hcmd_entry cmd_data[CMD_COUNT] = {
-	[CMD_ECHO] = {.cmd = "echo", .func = show_echo, .description = "Show words you input."},
+	[CMD_ECHO] = {.cmd = "echo", .func = show_echo, .description = "Show words you input after the command 'echo'."},
 	[CMD_EXPORT] = {.cmd = "export", .func = export_envvar, .description = "Export environment variables."},
 	[CMD_HELP] = {.cmd = "help", .func = show_cmd_info, .description = "List all commands you can use."},
 	[CMD_HISTORY] = {.cmd = "history", .func = show_history, .description = "Show latest commands entered."}, 
