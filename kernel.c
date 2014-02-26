@@ -74,6 +74,8 @@ void puts(char *s)
 #define PATH_MAX   32 /* Longest absolute path */
 #define PIPE_LIMIT (TASK_LIMIT * 2)
 
+#define WINDOW_LINES 23
+
 #define PATHSERVER_FD (TASK_LIMIT + 3) 
 	/* File descriptor of pipe to pathserver */
 
@@ -106,6 +108,7 @@ void show_cmd_info(int argc, char *argv[]);
 void show_task_info(int argc, char *argv[]);
 void show_man_page(int argc, char *argv[]);
 void show_history(int argc, char *argv[]);
+void window_clear(int argc, char *argv[]);
 
 /* Enumeration for command types. */
 enum {
@@ -115,6 +118,7 @@ enum {
 	CMD_HISTORY,
 	CMD_MAN,
 	CMD_PS,
+	CMD_CLEAR,
 	CMD_COUNT
 } CMD_TYPE;
 /* Structure for command handler. */
@@ -129,7 +133,8 @@ const hcmd_entry cmd_data[CMD_COUNT] = {
 	[CMD_HELP] = {.cmd = "help", .func = show_cmd_info, .description = "List all commands you can use."},
 	[CMD_HISTORY] = {.cmd = "history", .func = show_history, .description = "Show latest commands entered."}, 
 	[CMD_MAN] = {.cmd = "man", .func = show_man_page, .description = "Manual pager."},
-	[CMD_PS] = {.cmd = "ps", .func = show_task_info, .description = "List all the processes."}
+	[CMD_PS] = {.cmd = "ps", .func = show_task_info, .description = "List all the processes."},
+	[CMD_CLEAR] = {.cmd = "clear", .func = window_clear, .description = "Clear window."}
 };
 
 /* Structure for environment variables. */
@@ -762,6 +767,7 @@ void show_man_page(int argc, char *argv[])
 	write(fdout, next_line, 3);
 }
 
+//history
 void show_history(int argc, char *argv[])
 {
 	int i;
@@ -771,6 +777,16 @@ void show_history(int argc, char *argv[])
 			write(fdout, cmd[i % HISTORY_COUNT], strlen(cmd[i % HISTORY_COUNT]) + 1);
 			write(fdout, next_line, 3);
 		}
+	}
+}
+
+//clear
+void window_clear(int argc, char *argv[])
+{
+	int i;
+
+	for(i = 0; i < WINDOW_LINES; i++) {	
+		write(fdout, next_line, 3);
 	}
 }
 
