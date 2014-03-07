@@ -109,6 +109,7 @@ void show_task_info(int argc, char *argv[]);
 void show_man_page(int argc, char *argv[]);
 void show_history(int argc, char *argv[]);
 void window_clear(int argc, char *argv[]);
+void new_process(int argc, char *argv[]);
 
 /* Enumeration for command types. */
 enum {
@@ -119,6 +120,7 @@ enum {
 	CMD_MAN,
 	CMD_PS,
 	CMD_CLEAR,
+	CMD_NEW,
 	CMD_COUNT
 } CMD_TYPE;
 /* Structure for command handler. */
@@ -134,7 +136,8 @@ const hcmd_entry cmd_data[CMD_COUNT] = {
 	[CMD_HISTORY] = {.cmd = "history", .func = show_history, .description = "Show latest commands entered."}, 
 	[CMD_MAN] = {.cmd = "man", .func = show_man_page, .description = "Manual pager."},
 	[CMD_PS] = {.cmd = "ps", .func = show_task_info, .description = "List all the processes."},
-	[CMD_CLEAR] = {.cmd = "clear", .func = window_clear, .description = "Clear window."}
+	[CMD_CLEAR] = {.cmd = "clear", .func = window_clear, .description = "Clear window."},
+	[CMD_NEW] = {.cmd = "new", .func = new_process, .description = "Create new process."}
 };
 
 /* Structure for environment variables. */
@@ -156,7 +159,7 @@ struct user_thread_stack {
 	unsigned int r10;
 	unsigned int fp;
 	unsigned int _lr;	/* Back to system calls or return exception */
-	unsigned int _r7;	/* Backup from isr */
+	unsigned int _r8;	/* Backup from isr */
 	unsigned int r0;
 	unsigned int r1;
 	unsigned int r2;
@@ -790,6 +793,12 @@ void window_clear(int argc, char *argv[])
 	}
 }
 
+//new
+void new_process(int argc, char *argv[])
+{	
+	
+}
+
 int write_blank(int blank_num)
 {
 	char blank[] = " ";
@@ -1148,7 +1157,7 @@ int main()
 		tasks[current_task].status = TASK_READY;
 		timeup = 0;
 
-		switch (tasks[current_task].stack->r7) {
+		switch (tasks[current_task].stack->r8) {
 		case 0x1: /* fork */
 			if (task_count == TASK_LIMIT) {
 				/* Cannot create a new task, return error */
@@ -1232,8 +1241,8 @@ int main()
 			}
 			break;
 		default: /* Catch all interrupts */
-			if ((int)tasks[current_task].stack->r7 < 0) {
-				unsigned int intr = -tasks[current_task].stack->r7 - 16;
+			if ((int)tasks[current_task].stack->r8 < 0) {
+				unsigned int intr = -tasks[current_task].stack->r8 - 16;
 
 				if (intr == SysTick_IRQn) {
 					/* Never disable timer. We need it for pre-emption */
