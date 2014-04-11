@@ -4,6 +4,13 @@
 #include "syscall.h"
 
 #include <stddef.h>
+//#include <ctype.h> //test ctype
+
+void *malloc(size_t size)
+{
+	static char m[1024] = {0};
+	return m;
+}
 
 void *memcpy(void *dest, const void *src, size_t n);
 
